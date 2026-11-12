@@ -34,7 +34,10 @@ function ProjectTabs({ model }: { model: Model }) {
   );
 }
 
-const STATE_BADGE: Record<EpicRow['state'], { label: string; tone: 'neutral' | 'warn' | 'accent' }> = {
+// Columnas "Avance ponderado" y "Épicos sin duración" de "Resumen por proyecto": ocultas, no borradas. Poner en true para mostrarlas.
+const SHOW_WEIGHTED_COLS = false;
+
+const STATE_BADGE:Record<EpicRow['state'], { label: string; tone: 'neutral' | 'warn' | 'accent' }> = {
   ok: { label: 'Ponderado', tone: 'neutral' },
   'sin-duracion': { label: 'Sin duración planificada', tone: 'warn' },
   'pendiente-descomposicion': { label: 'Pendiente de descomposición', tone: 'warn' },
@@ -69,6 +72,8 @@ export function GlobalView({ model }: { model: Model }) {
 
       {/* Indicadores principales -------------------------------------------- */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* Oculto (no borrado): quitar `hidden` para volver a mostrarlo. */}
+        <div className="hidden">
         <Card
           title="Avance ponderado por duración"
           subtitle={`Trabajo completado sobre la duración planificada de los épicos de ${scopeLabel}.`}
@@ -108,6 +113,7 @@ export function GlobalView({ model }: { model: Model }) {
             )}
           </div>
         </Card>
+        </div>
 
         <Card title="Actividades completadas" subtitle="Proporción por cantidad, sin ponderar. No es equivalente al avance ponderado.">
           <div className="mb-3 text-5xl font-semibold text-ink">
@@ -168,8 +174,8 @@ export function GlobalView({ model }: { model: Model }) {
                 <th className="num">Completadas</th>
                 <th className="num">No completadas</th>
                 <th className="num">% completadas</th>
-                <th className="num">Avance ponderado</th>
-                <th className="num">Épicos sin duración</th>
+                {SHOW_WEIGHTED_COLS && <th className="num">Avance ponderado</th>}
+                {SHOW_WEIGHTED_COLS && <th className="num">Épicos sin duración</th>}
               </tr>
             </thead>
             <tbody>
@@ -185,10 +191,12 @@ export function GlobalView({ model }: { model: Model }) {
                   <td className="num">{fmtInt(p.completed)}</td>
                   <td className="num">{fmtInt(p.total - p.completed)}</td>
                   <td className="num">{fmtPct(p.completedPct)}</td>
-                  <td className="num" title={p.weighted.reason ?? undefined}>
-                    {p.weighted.pct === null ? 'No calculable' : fmtPct(p.weighted.pct)}
-                  </td>
-                  <td className="num">{fmtInt(p.weighted.epicsWithoutDuration.length)}</td>
+                  {SHOW_WEIGHTED_COLS && (
+                    <td className="num" title={p.weighted.reason ?? undefined}>
+                      {p.weighted.pct === null ? 'No calculable' : fmtPct(p.weighted.pct)}
+                    </td>
+                  )}
+                  {SHOW_WEIGHTED_COLS && <td className="num">{fmtInt(p.weighted.epicsWithoutDuration.length)}</td>}
                 </tr>
               ))}
               {projects.length > 1 && (
@@ -198,8 +206,8 @@ export function GlobalView({ model }: { model: Model }) {
                   <td className="num">{fmtInt(o.completed)}</td>
                   <td className="num">{fmtInt(o.total - o.completed)}</td>
                   <td className="num">{fmtPct(o.completedPct)}</td>
-                  <td className="num">{w.pct === null ? 'No calculable' : fmtPct(w.pct)}</td>
-                  <td className="num">{fmtInt(w.epicsWithoutDuration.length)}</td>
+                  {SHOW_WEIGHTED_COLS && <td className="num">{w.pct === null ? 'No calculable' : fmtPct(w.pct)}</td>}
+                  {SHOW_WEIGHTED_COLS && <td className="num">{fmtInt(w.epicsWithoutDuration.length)}</td>}
                 </tr>
               )}
             </tbody>
