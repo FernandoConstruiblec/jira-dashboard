@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+*.log
+# Volcados locales de Jira (contienen datos internos)
+fixtures/
+dumps/

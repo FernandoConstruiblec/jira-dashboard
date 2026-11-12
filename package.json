@@ -1,0 +1,17 @@
+{
+  "name": "jira-dashboard",
+  "private": true,
+  "description": "Dashboard de seguimiento de SGCC (KMS) y Prototipo (CSE). Un solo servicio: NestJS sirve la API y el frontend compilado.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "install:all": "npm --prefix backend ci && npm --prefix frontend ci",
+    "build": "npm --prefix frontend run build && npm --prefix backend run build",
+    "start": "node backend/dist/main.js",
+    "dev:api": "npm --prefix backend run start:dev",
+    "dev:web": "npm --prefix frontend run dev",
+    "test": "npm --prefix frontend test && npm --prefix backend test",
+    "typecheck": "npm --prefix frontend run typecheck && npm --prefix backend run typecheck"
+  }
+}

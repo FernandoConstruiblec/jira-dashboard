@@ -1,0 +1,25 @@
+# Blueprint de Render: UN solo servicio web. NestJS sirve la API (/api) y el
+# frontend compilado (el resto de rutas), en el mismo dominio.
+# Las variables con sync: false se cargan a mano en el panel (no se versionan).
+services:
+  - type: web
+    name: jira-dashboard
+    runtime: node
+    buildCommand: npm run install:all && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: JIRA_BASE_URL
+        value: https://construiblec.atlassian.net
+      - key: JIRA_EMAIL
+        sync: false
+      - key: JIRA_API_TOKEN
+        sync: false
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CACHE_TTL_MINUTES
+        value: "5"
