@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import type { Category, DashboardConfig } from '../contract/snapshot';
+import type { Category, DashboardConfig, Holiday } from '../contract/snapshot';
 
 const CATEGORIES: Category[] = [
   'POR_HACER',
@@ -51,10 +51,17 @@ export function validateConfig(raw: unknown): DashboardConfig {
   if (mode !== 'businessDays' && mode !== 'calendarDays') {
     errors.push('"duration.mode" debe ser "businessDays" o "calendarDays".');
   }
-  const holidays = c.duration?.holidays ?? [];
-  holidays.forEach((h) => {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(h))
-      errors.push(`duration.holidays contiene "${h}"; usa el formato AAAA-MM-DD.`);
+  // Cada feriado puede ser "AAAA-MM-DD" o { "date": "AAAA-MM-DD", "name": "…" }.
+  const rawHolidays = (c.duration?.holidays ?? []) as unknown[];
+  const holidays: Holiday[] = [];
+  rawHolidays.forEach((h, i) => {
+    const date = typeof h === 'string' ? h : (h as Partial<Holiday>)?.date;
+    const name = typeof h === 'string' ? '' : String((h as Partial<Holiday>)?.name ?? '');
+    if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) {
+      errors.push(`duration.holidays[${i}] tiene la fecha "${String(date)}"; usa el formato AAAA-MM-DD.`);
+    } else {
+      holidays.push({ date, name });
+    }
   });
 
   (c.people ?? []).forEach((p, i) => {

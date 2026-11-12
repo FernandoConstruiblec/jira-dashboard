@@ -30,6 +30,13 @@ export interface PersonConfig {
   focus?: boolean;
 }
 
+/** Día no laborable que se descuenta de la duración en días hábiles. */
+export interface Holiday {
+  /** AAAA-MM-DD: el día que efectivamente se descansa (con traslados). */
+  date: string;
+  name: string;
+}
+
 export interface DashboardConfig {
   projects: ProjectConfig[];
   /** ID de estado de Jira -> categoría del dashboard. Nunca se usa statusCategory. */
@@ -37,7 +44,7 @@ export interface DashboardConfig {
   /** Categorías que no se muestran mientras no tengan actividades. */
   hideEmptyCategories: Category[];
   fields: { sprint: string; startDate: string };
-  duration: { mode: 'businessDays' | 'calendarDays'; holidays: string[] };
+  duration: { mode: 'businessDays' | 'calendarDays'; holidays: Holiday[] };
   people: PersonConfig[];
 }
 

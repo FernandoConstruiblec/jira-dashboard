@@ -1,6 +1,7 @@
 import { IssueLink } from '../components/IssueLink';
 import { Badge, Card, Notice, TableScroll } from '../components/ui';
 import { CATEGORY_LABEL } from '../domain/categories';
+import { formatDate } from '../domain/dates';
 import type { Model } from '../domain/model';
 import { fmtInt } from '../format';
 
@@ -115,13 +116,29 @@ export function ConfigView({ model }: { model: Model }) {
             <dt className="text-ink-2">Duración de épicos</dt>
             <dd>
               {cfg.duration.mode === 'businessDays' ? 'Días hábiles (lunes a viernes)' : 'Días calendario'}
-              {cfg.duration.holidays.length ? `, sin ${cfg.duration.holidays.length} feriados` : ', sin feriados configurados'}
+              {cfg.duration.mode === 'businessDays' &&
+                (cfg.duration.holidays.length
+                  ? `, descontando ${cfg.duration.holidays.length} feriados de Ecuador (lista abajo)`
+                  : ', sin feriados configurados')}
             </dd>
             <dt className="text-ink-2">Equipo</dt>
             <dd>{cfg.people.map((p) => `${p.name}${p.role ? ` (${p.role})` : ''}`).join(', ')}</dd>
           </dl>
         </Card>
       </div>
+
+      {cfg.duration.holidays.length > 0 && (
+        <Card title="Feriados descontados" subtitle="Días que se descansan efectivamente (ya trasladados). Se editan en duration.holidays.">
+          <ul className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2 lg:grid-cols-3">
+            {cfg.duration.holidays.map((h) => (
+              <li key={h.date} className="flex gap-2">
+                <span className="tabular whitespace-nowrap text-ink-2">{formatDate(h.date)}</span>
+                <span>{h.name}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
 
       <Card
         title="Épicos sin duración planificada"

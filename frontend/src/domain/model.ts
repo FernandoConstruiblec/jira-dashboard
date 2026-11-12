@@ -226,9 +226,10 @@ export function buildModel(snapshot: Snapshot): Model {
 
   // --- Épicos -------------------------------------------------------------
   const epics: Epic[] = [];
+  const holidayDates = config.duration.holidays.map((h) => h.date);
   for (const issue of snapshot.issues) {
     if (issue.level !== 'epic' || excludedEpics.has(issue.key)) continue;
-    const duration = durationDays(issue.startDate, issue.dueDate, config.duration.mode, config.duration.holidays);
+    const duration = durationDays(issue.startDate, issue.dueDate, config.duration.mode, holidayDates);
     epics.push({
       key: issue.key,
       projectKey: issue.projectKey,

@@ -71,7 +71,7 @@ Se relee en cada actualización de datos; no hace falta reiniciar.
 | `statusMap` | **ID de estado de Jira → categoría** (`POR_HACER`, `EN_CURSO`, `EN_REVISION`, `VALIDACION_TECNICA`, `COMPLETADA`). Un estado que no esté aquí aparece como *Estado sin mapear* y genera un aviso; nunca se asigna a una categoría por defecto. |
 | `hideEmptyCategories` | Categorías que no se muestran mientras no tengan actividades. Validación técnica está aquí porque el equipo no usa ese estado. |
 | `fields` | IDs de los campos Sprint y Fecha de inicio en este sitio de Jira. |
-| `duration` | `businessDays` (lunes a viernes) o `calendarDays`, y la lista de feriados (`AAAA-MM-DD`) a descontar. Hoy está vacía. |
+| `duration` | `businessDays` (lunes a viernes) o `calendarDays`, y los feriados a descontar como `{ "date": "AAAA-MM-DD", "name": "…" }`. Ya incluye los feriados nacionales de Ecuador 2026 y 2027 en la fecha en que se descansan (con traslados), más los días decretados (2-ene-2026 y 20-nov-2026). Fuente: calendario del Viceministerio de Turismo. Hay que agregar cada año los días que el Ejecutivo decrete. |
 | `people[]` | Equipo: `accountId`, nombre, rol y `focus` (personas destacadas en la vista por persona). |
 
 Para obtener el ID de un estado nuevo: la pantalla **Configuración** lista todos los estados de cada flujo con su ID.

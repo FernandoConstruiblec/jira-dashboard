@@ -30,6 +30,28 @@ describe('configuración', () => {
   });
 });
 
+describe('feriados', () => {
+  const base = { projects: [{ key: 'A', label: 'A', boardId: 1 }], statusMap: {}, fields: { sprint: 'x', startDate: 'y' } };
+
+  it('acepta fechas sueltas u objetos con nombre', () => {
+    const cfg = validateConfig({
+      ...base,
+      duration: { mode: 'businessDays', holidays: ['2026-12-25', { date: '2026-11-02', name: 'Difuntos' }] },
+    });
+    expect(cfg.duration.holidays).toEqual([
+      { date: '2026-12-25', name: '' },
+      { date: '2026-11-02', name: 'Difuntos' },
+    ]);
+  });
+
+  it('la configuración versionada trae los feriados de Ecuador sin duplicados', () => {
+    const cfg = loadConfig(join(__dirname, '../../dashboard.config.json'));
+    const dates = cfg.duration.holidays.map((h) => h.date);
+    expect(dates).toContain('2026-11-03');
+    expect(new Set(dates).size).toBe(dates.length);
+  });
+});
+
 describe('contrato backend/frontend', () => {
   it('las dos copias de contract son idénticas', () => {
     const back = readFileSync(join(__dirname, '../contract/snapshot.ts'), 'utf8');

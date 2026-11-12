@@ -120,6 +120,15 @@ describe('duración de épicos', () => {
     expect(durationDays('2026-11-06', '2026-11-01', 'businessDays')).toBeNull();
   });
 
+  it('usa los feriados de la configuración al pesar los épicos', () => {
+    const snap = snapshot([epic('SGCC-1', '2026-10-29', '2026-11-06')]);
+    snap.config = {
+      ...snap.config,
+      duration: { mode: 'businessDays', holidays: [{ date: '2026-11-02', name: 'Difuntos' }, { date: '2026-11-03', name: 'Cuenca' }] },
+    };
+    expect(buildModel(snap).epicByKey.get('SGCC-1')!.duration).toBe(5);
+  });
+
   it('marca el motivo cuando un épico no tiene duración', () => {
     const model = buildModel(
       snapshot([
